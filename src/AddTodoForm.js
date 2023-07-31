@@ -22,7 +22,7 @@ const AddTodoForm = ({ onAddTodo }) => {
         todoTitle={todoTitle}
         handleTitleChange={handleTitleChange}
       >
-        Title
+        <span>Title: </span>
       </InputWithLabel>
       <button>Add</button>
     </form>

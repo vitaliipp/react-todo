@@ -8,7 +8,7 @@ const InputWithLabel = ({ todoTitle, handleTitleChange, children }) => {
 
   return (
     <>
-      <label htmlFor="todoTitle">{children}: </label>
+      <label htmlFor="todoTitle">{children}</label>
       <input
         id="todoTitle"
         ref={inputRef}
