@@ -5,6 +5,8 @@ import AddTodoForm from './AddTodoForm';
 
 function App() {
   const [todoList, setTodoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -16,11 +18,15 @@ function App() {
       }, 2000);
     }).then((result) => {
       setTodoList(result.data.todoList);
+      setIsLoading(false);
     });
   }, []);
+
   useEffect(() => {
-    localStorage.setItem('savedTodoList', JSON.stringify(todoList));
-  }, [todoList]);
+    if (!isLoading) {
+      localStorage.setItem('savedTodoList', JSON.stringify(todoList));
+    }
+  }, [todoList, isLoading]);
 
   const addTodo = (newTodo) => {
     setTodoList([...todoList, newTodo]);
