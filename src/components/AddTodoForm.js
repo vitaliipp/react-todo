@@ -25,7 +25,7 @@ const AddTodoForm = ({ onAddTodo }) => {
         todoTitle={todoTitle}
         handleTitleChange={handleTitleChange}
       >
-        {/* <span>Title: </span> */}
+        {''}
       </InputWithLabel>
       <button className={style.AddBtn}>Add item</button>
     </form>
