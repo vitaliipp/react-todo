@@ -14,7 +14,7 @@ const TodoContainer = () => {
         Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
       },
     };
-    const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}/?view=Grid%20view`;
+    const url = `https://api.airtable.com/v0/${process.env.REACT_APP_AIRTABLE_BASE_ID}/${process.env.REACT_APP_TABLE_NAME}/?sort[0][field]=title&sort[0][direction]=asc`;
     try {
       const response = await fetch(url, options);
       if (!response.ok) {
