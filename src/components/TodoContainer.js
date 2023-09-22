@@ -61,7 +61,17 @@ const TodoContainer = () => {
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+          <>
+            <div className={style.SortForm}>
+              <label htmlFor="sort">sort by :</label>
+              <select name="sort" id="sort" className={style.SortInput}>
+                <option value="select">--Please choose an option--</option>
+                <option value="name-a">title (a - z)</option>
+                <option value="name-z">title (z - a)</option>
+              </select>
+            </div>
+            <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+          </>
         )}
       </section>
     </>
