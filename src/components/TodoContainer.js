@@ -36,7 +36,7 @@ const TodoContainer = () => {
       setTodoList(todos);
       setIsLoading(false);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
   };
 
@@ -72,12 +72,50 @@ const TodoContainer = () => {
     }
   }, [todoList, isLoading]);
 
-  const addTodo = (newTodo) => {
+  const addTodo = async (newTodo) => {
+    //prerendering todolist before fetching to increase usability
     setTodoList([...todoList, newTodo]);
+    try {
+      const responce = await fetch(defaultUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          'Content-type': 'application/json',
+        },
+        body: `{"records": [{"fields": {"title":"${newTodo.title}"}}]}`,
+      });
+
+      const data = await responce.json();
+      const newRecord = data.records[0];
+      //The todo list should match the pre-rendered version, so no additional rendering should be applied
+      setTodoList([
+        ...todoList,
+        { id: newRecord.id, title: newRecord.fields.title },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const removeTodo = (id) => {
+
+  const removeTodo = async (id) => {
     const newTodoList = todoList.filter((item) => item.id !== id);
     setTodoList(newTodoList);
+
+    try {
+      const responce = await fetch(`${defaultUrl}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          'Content-type': 'application/json',
+        },
+      });
+      // The todo list should match the pre-rendered version, so no additional rendering should be applied
+      await responce.json();
+      //   const newTodoList = todoList.filter((item) => item.id !== data.id);
+      //   setTodoList(newTodoList);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
