@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import AddTodoForm from './AddTodoForm';
 import TodoList from './TodoList';
 import { sortTitlesAZ, sortTitlesZA } from '../utils/sortTitles';
@@ -76,6 +77,7 @@ const TodoContainer = () => {
   const addTodo = async (newTodo) => {
     //prerendering todolist before fetching to increase usability
     setTodoList([...todoList, newTodo]);
+    toast.success('Item added to the list');
     try {
       const responce = await fetch(defaultUrl, {
         method: 'POST',
@@ -101,7 +103,7 @@ const TodoContainer = () => {
   const removeTodo = async (id) => {
     const newTodoList = todoList.filter((item) => item.id !== id);
     setTodoList(newTodoList);
-
+    toast.success('Item deleted');
     try {
       const responce = await fetch(`${defaultUrl}/${id}`, {
         method: 'DELETE',
@@ -122,6 +124,7 @@ const TodoContainer = () => {
   return (
     <>
       <section className={style.Section}>
+        <ToastContainer position="top-center" />
         <AddTodoForm onAddTodo={addTodo} />
         {isLoading ? (
           <Loading />
