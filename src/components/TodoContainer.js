@@ -3,6 +3,7 @@ import AddTodoForm from './AddTodoForm';
 import TodoList from './TodoList';
 import { sortTitlesAZ, sortTitlesZA } from '../utils/sortTitles';
 import style from './TodoContainer.module.css';
+import Loading from './Loading';
 
 const TodoContainer = () => {
   const [todoList, setTodoList] = useState([]);
@@ -123,7 +124,7 @@ const TodoContainer = () => {
       <section className={style.Section}>
         <AddTodoForm onAddTodo={addTodo} />
         {isLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : (
           <>
             <div className={style.SortForm}>
