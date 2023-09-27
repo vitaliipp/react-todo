@@ -18,13 +18,13 @@ const AddTodoForm = ({ onAddTodo }) => {
       toast.error('Please provide value');
       return;
     }
-    onAddTodo({ title: todoTitle, id: Date.now() });
+    onAddTodo({ title: todoTitle, id: Date.now(), isCompleted: false });
     setTodoTitle('');
   };
 
   return (
     <form className={style.FormControl} onSubmit={handleAddTodo}>
-      <h4>todo list</h4>
+      <h4>TODO LIST</h4>
       <InputWithLabel
         todoTitle={todoTitle}
         handleTitleChange={handleTitleChange}

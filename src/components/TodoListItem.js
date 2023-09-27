@@ -2,10 +2,22 @@ import React from 'react';
 import style from './TodoListItem.module.css';
 import PropTypes from 'prop-types';
 
-const TodoListItem = ({ todo, onRemoveTodo }) => {
+const TodoListItem = ({ todo, onRemoveTodo, onEditTodo }) => {
   return (
     <li className={style.ListItem}>
-      {todo.title}
+      <input
+        type="checkbox"
+        checked={todo.isCompleted}
+        onChange={() => onEditTodo(todo.id, todo.isCompleted)}
+      />
+      <p
+        style={{
+          textDecoration: todo.isCompleted && 'line-through',
+          color: todo.isCompleted && 'green',
+        }}
+      >
+        {todo.title}
+      </p>
       <button
         className={style.RemoveButton}
         onClick={() => onRemoveTodo(todo.id)}

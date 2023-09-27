@@ -31,6 +31,7 @@ const TodoContainer = () => {
         const newTodo = {
           id: todo.id,
           title: todo.fields.title,
+          isCompleted: todo.fields.isCompleted || false,
         };
         return newTodo;
       });
@@ -121,6 +122,34 @@ const TodoContainer = () => {
     }
   };
 
+  const editTodo = async (id, isCompleted) => {
+    const newTodoList = todoList.map((item) => {
+      if (item.id === id) {
+        const newItem = { ...item, isCompleted: !item.isCompleted };
+        return newItem;
+      }
+      return item;
+    });
+
+    setTodoList(newTodoList);
+    try {
+      const responce = await fetch(`${defaultUrl}/${id}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          fields: { isCompleted: !isCompleted },
+        }),
+      });
+
+      await responce.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <section className={style.Section}>
@@ -145,7 +174,11 @@ const TodoContainer = () => {
                 <option value="airtable-az">airtable (a-z)</option>
               </select>
             </div>
-            <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+            <TodoList
+              todoList={todoList}
+              onRemoveTodo={removeTodo}
+              onEditTodo={editTodo}
+            />
           </>
         )}
       </section>
