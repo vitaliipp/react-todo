@@ -3,12 +3,17 @@ import TodoListItem from './TodoListItem';
 import style from './TodoList.module.css';
 import PropTypes from 'prop-types';
 
-const TodoList = ({ todoList, onRemoveTodo }) => {
+const TodoList = ({ todoList, onRemoveTodo, onEditTodo }) => {
   return (
     <ul className={style.ListItems}>
       {todoList.map((item) => {
         return (
-          <TodoListItem key={item.id} todo={item} onRemoveTodo={onRemoveTodo} />
+          <TodoListItem
+            key={item.id}
+            todo={item}
+            onRemoveTodo={onRemoveTodo}
+            onEditTodo={onEditTodo}
+          />
         );
       })}
     </ul>

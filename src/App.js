@@ -1,10 +1,15 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TodoContainer from './components/TodoContainer';
+import Navbar from './components/Navbar';
+import About from './pages/About';
+import Projects from './pages/Projects';
+import Contact from './pages/Contact';
 
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
         <Route
           path="/"
@@ -14,7 +19,9 @@ function App() {
             </>
           }
         />
-        <Route path="/new" element={<h1>New Todo List</h1>} />
+        <Route path="/about" element={<About />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
     </BrowserRouter>
   );

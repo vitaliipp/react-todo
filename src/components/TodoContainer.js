@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import AddTodoForm from './AddTodoForm';
 import TodoList from './TodoList';
 import { sortTitlesAZ, sortTitlesZA } from '../utils/sortTitles';
 import style from './TodoContainer.module.css';
+import Loading from './Loading';
 
 const TodoContainer = () => {
   const [todoList, setTodoList] = useState([]);
@@ -29,6 +31,7 @@ const TodoContainer = () => {
         const newTodo = {
           id: todo.id,
           title: todo.fields.title,
+          isCompleted: todo.fields.isCompleted || false,
         };
         return newTodo;
       });
@@ -36,7 +39,7 @@ const TodoContainer = () => {
       setTodoList(todos);
       setIsLoading(false);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
   };
 
@@ -72,20 +75,88 @@ const TodoContainer = () => {
     }
   }, [todoList, isLoading]);
 
-  const addTodo = (newTodo) => {
+  const addTodo = async (newTodo) => {
+    //prerendering todolist before fetching to increase usability
     setTodoList([...todoList, newTodo]);
+    toast.success('Item added to the list');
+    try {
+      const responce = await fetch(defaultUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          'Content-type': 'application/json',
+        },
+        body: `{"records": [{"fields": {"title":"${newTodo.title}"}}]}`,
+      });
+
+      const data = await responce.json();
+      const newRecord = data.records[0];
+      //The todo list should match the pre-rendered version, so no additional rendering should be applied
+      setTodoList([
+        ...todoList,
+        { id: newRecord.id, title: newRecord.fields.title },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const removeTodo = (id) => {
+
+  const removeTodo = async (id) => {
     const newTodoList = todoList.filter((item) => item.id !== id);
     setTodoList(newTodoList);
+    toast.success('Item deleted');
+    try {
+      const responce = await fetch(`${defaultUrl}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          'Content-type': 'application/json',
+        },
+      });
+      // The todo list should match the pre-rendered version, so no additional rendering should be applied
+      await responce.json();
+      //   const newTodoList = todoList.filter((item) => item.id !== data.id);
+      //   setTodoList(newTodoList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const editTodo = async (id, isCompleted) => {
+    const newTodoList = todoList.map((item) => {
+      if (item.id === id) {
+        const newItem = { ...item, isCompleted: !item.isCompleted };
+        return newItem;
+      }
+      return item;
+    });
+
+    setTodoList(newTodoList);
+    try {
+      const responce = await fetch(`${defaultUrl}/${id}`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_KEY}`,
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          fields: { isCompleted: !isCompleted },
+        }),
+      });
+
+      await responce.json();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <>
       <section className={style.Section}>
+        <ToastContainer position="top-center" />
         <AddTodoForm onAddTodo={addTodo} />
         {isLoading ? (
-          <p>Loading...</p>
+          <Loading />
         ) : (
           <>
             <div className={style.SortForm}>
@@ -103,7 +174,11 @@ const TodoContainer = () => {
                 <option value="airtable-az">airtable (a-z)</option>
               </select>
             </div>
-            <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+            <TodoList
+              todoList={todoList}
+              onRemoveTodo={removeTodo}
+              onEditTodo={editTodo}
+            />
           </>
         )}
       </section>
