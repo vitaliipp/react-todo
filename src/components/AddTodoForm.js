@@ -24,7 +24,7 @@ const AddTodoForm = ({ onAddTodo }) => {
 
   return (
     <form className={style.FormControl} onSubmit={handleAddTodo}>
-      <h2>todo list</h2>
+      <h4>todo list</h4>
       <InputWithLabel
         todoTitle={todoTitle}
         handleTitleChange={handleTitleChange}
